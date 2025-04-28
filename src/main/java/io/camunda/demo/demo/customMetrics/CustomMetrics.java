@@ -22,18 +22,28 @@ public class CustomMetrics {
     );
 
     /*
-    Job Worker annotation and only fetch required variables
+    Job worker delegates the query for metric data to CustomMetricsEndpoint implementations.
+    If a variable of the same name already exists (i.e., in case of a looping model), we add to the value.
      */
-    @JobWorker(type = PREFIX_NAME + "query", fetchVariables = {"__customMetricsType", "__customMetricsData"})
+    @JobWorker(type = PREFIX_NAME + "query")
     public Map<String, Object> queryMetricData(final ActivatedJob job,
                                                @Variable(name = "__customMetricsType") String metricType,
                                                @Variable(name = "__customMetricsData") String metricData) {
-        CustomMetricsEndpoint endpoint = endpointMap.get(metricType);
-
-        if (endpoint != null) {
-            return Map.of("CustomMetric_" + metricType + "_" + job.getElementId(), endpoint.queryMetric(metricData));
+        String varName = PREFIX_NAME + metricType + "_" + job.getElementId();
+        Double result = 0.0;
+        try {
+            result = Double.valueOf(job.getVariable(varName).toString());
+        } catch (Exception e) {
+            // variable of varName is not present.
         }
-        return Map.of();
+
+        CustomMetricsEndpoint endpoint = endpointMap.get(metricType);
+        if (endpoint != null) {
+            Double query = endpoint.queryMetric(metricData);
+            result += query;
+            LOG.info("Logging queried metric of value: {}", query);
+        }
+        return Map.of(varName, result);
     }
 
     @JobWorker(type = PREFIX_NAME + "compile")

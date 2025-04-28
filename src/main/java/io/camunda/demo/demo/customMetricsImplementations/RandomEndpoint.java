@@ -20,7 +20,7 @@ public class RandomEndpoint implements CustomMetricsEndpoint {
             LOG.info("Construct random value with max: {} and offset: {}", value.max, value.offset);
             return (double) Math.round(RANDOM.nextDouble() * value.max + value.offset);
         } catch (JsonProcessingException e) {
-            LOG.info("JSON formatting error, Could not construct variables");
+            LOG.error("JSON formatting error, Could not construct variables");
             throw new RuntimeException(e);
         }
     }
