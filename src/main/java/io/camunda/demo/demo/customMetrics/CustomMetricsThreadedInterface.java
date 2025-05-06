@@ -12,5 +12,5 @@ public interface CustomMetricsThreadedInterface {
 
     Abstract query metric function to query a double metric value from.
      */
-    public Double queryMetric(final ActivatedJob job, final AtomicDouble atomicMetricValue);
+    Double queryMetric(final ActivatedJob job, final AtomicDouble atomicMetricValue);
 }

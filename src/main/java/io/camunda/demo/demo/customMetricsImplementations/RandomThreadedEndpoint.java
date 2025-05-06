@@ -1,7 +1,6 @@
 package io.camunda.demo.demo.customMetricsImplementations;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import io.camunda.demo.demo.customMetrics.CustomMetricsThread;
 import io.camunda.demo.demo.customMetrics.CustomMetricsThreadedInterface;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 
