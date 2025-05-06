@@ -16,19 +16,14 @@ import static io.camunda.demo.demo.customMetrics.CustomMetricsProcessConstants.P
 @Component
 public class CustomMetrics {
     private final static Logger LOG = LoggerFactory.getLogger(CustomMetrics.class);
-    private final static Map<String, CustomMetricsEndpoint> endpointMap = Map.of(
-            "energy", new RandomEndpoint(),
-            "water", new RandomEndpoint()
-    );
+    private final static Map<String, CustomMetricsEndpointInterface> endpointMap = Map.of("energy", new RandomEndpoint(), "water", new RandomEndpoint());
 
     /*
     Job worker delegates the query for metric data to CustomMetricsEndpoint implementations.
     If a variable of the same name already exists (i.e., in case of a looping model), we add to the value.
      */
     @JobWorker(type = PREFIX_NAME + "query")
-    public Map<String, Object> queryMetricData(final ActivatedJob job,
-                                               @Variable(name = "__customMetricsType") String metricType,
-                                               @Variable(name = "__customMetricsData") String metricData) {
+    public Map<String, Object> queryMetricData(final ActivatedJob job, @Variable(name = "__customMetricsType") String metricType, @Variable(name = "__customMetricsData") String metricData) {
         String varName = PREFIX_NAME + metricType + "_" + job.getElementId();
         Double result = 0.0;
         try {
@@ -37,9 +32,9 @@ public class CustomMetrics {
             // variable of varName is not present.
         }
 
-        CustomMetricsEndpoint endpoint = endpointMap.get(metricType);
+        CustomMetricsEndpointInterface endpoint = endpointMap.get(metricType);
         if (endpoint != null) {
-            Double query = endpoint.queryMetric(metricData);
+            Double query = endpoint.queryMetric(job);
             result += query;
             LOG.info("Logging queried metric of value: {}", query);
         }

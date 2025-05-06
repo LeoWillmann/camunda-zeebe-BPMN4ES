@@ -5,10 +5,6 @@
     <bpmn:serviceTask id="Activity_0r18lc7" name="charge credit card">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="charge-credit-card" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="customMetricsType" value="1" />
-          <zeebe:header key="test" value="Testing3.5" />
-        </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;energy&#34;" target="__customMetricsType" />
           <zeebe:input source="=&#34;{\&#34;max\&#34;: 100}&#34;" target="__customMetricsData" />
