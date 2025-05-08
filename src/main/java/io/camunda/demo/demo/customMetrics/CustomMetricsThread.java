@@ -49,10 +49,7 @@ public class CustomMetricsThread extends Thread {
         LOG.info("CustomMetricsThread is running for job {} with interface implementation {}",
                 job.getKey(), threadedQueryInterface.getClass().getName());
 
-        Double value = threadedQueryInterface.queryMetric(job, atomicMetricValue);
-        if (value != null) {    // check for null condition
-            atomicMetricValue.set(value);
-        }
+        queryAndSetMetricValue();
 
         while (isRunning.get()) {
             // timeout between queries
@@ -63,13 +60,20 @@ public class CustomMetricsThread extends Thread {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
-            value = threadedQueryInterface.queryMetric(job, atomicMetricValue);
-            if (value != null) {    // check for null condition
-                atomicMetricValue.set(value);
-            }
+            queryAndSetMetricValue();
         }
         LOG.info("CustomMetricsThread is done for job {} with interface implementation {}",
                 job.getKey(), threadedQueryInterface.getClass().getName());
+    }
+
+    /*
+    Queries a metric value from the set query implementation
+    and sets the Atomic boolean if the returned value is not null.
+     */
+    private void queryAndSetMetricValue() {
+        Double value = threadedQueryInterface.queryMetric(job, atomicMetricValue);
+        if (value != null) {    // check for null condition
+            atomicMetricValue.set(value);
+        }
     }
 }
