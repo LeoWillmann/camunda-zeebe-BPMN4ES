@@ -22,10 +22,11 @@ public class CustomMetricsThread extends Thread {
 
     public CustomMetricsThread(ActivatedJob job, long timeoutMillis,
                                CustomMetricsThreadedInterface threadedQueryInterface) {
-        LOG.info("CustomMetricsThread created for job {}", job.getKey());
         this.job = job;
         this.timeoutMillis = timeoutMillis;
         this.threadedQueryInterface = threadedQueryInterface;
+        LOG.info("CustomMetricsThread created for job {} with interface implementation {}",
+                job.getKey(), threadedQueryInterface.getClass().getName());
     }
 
     // Stops the isRunning while loop in the run() method.
@@ -45,7 +46,8 @@ public class CustomMetricsThread extends Thread {
     In every iteration of the loop, we check the isRunning boolean, wait for the timeout, and query a metric value.
      */
     public void run() {
-        LOG.info("CustomMetricsThread is running for job {}", job.getKey());
+        LOG.info("CustomMetricsThread is running for job {} with interface implementation {}",
+                job.getKey(), threadedQueryInterface.getClass().getName());
 
         Double value = threadedQueryInterface.queryMetric(job, atomicMetricValue);
         if (value != null) {    // check for null condition
@@ -67,6 +69,7 @@ public class CustomMetricsThread extends Thread {
                 atomicMetricValue.set(value);
             }
         }
-        LOG.info("CustomMetricsThread is done for job {}", job.getKey());
+        LOG.info("CustomMetricsThread is done for job {} with interface implementation {}",
+                job.getKey(), threadedQueryInterface.getClass().getName());
     }
 }

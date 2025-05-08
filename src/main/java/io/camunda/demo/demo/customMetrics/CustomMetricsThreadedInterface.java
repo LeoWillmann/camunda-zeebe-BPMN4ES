@@ -9,8 +9,7 @@ public interface CustomMetricsThreadedInterface {
     This interface allows for abstract queries to endpoints for the CustomMetricsThread class.
     The method argument is the Zeebe's ActivatedJob class through which one can access all available parameters.
     And the current metric value is also passed along as an AtomicDouble.
-
-    Abstract query metric function to query a double metric value from.
+    The queryMetric function returns a Double which contains the quantity of the metric.
      */
     Double queryMetric(final ActivatedJob job, final AtomicDouble atomicMetricValue);
 }

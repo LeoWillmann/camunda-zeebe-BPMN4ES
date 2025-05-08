@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
+import static io.camunda.demo.demo.customMetrics.CustomMetricsProcessConstants.METRIC_DATA_VAR_NAME;
+
 public class RandomEndpoint implements CustomMetricsEndpointInterface {
     private final static Logger LOG = LoggerFactory.getLogger(RandomEndpoint.class);
     private final static Random RANDOM = new Random();
@@ -16,7 +18,7 @@ public class RandomEndpoint implements CustomMetricsEndpointInterface {
 
     @Override
     public Double queryMetric(final ActivatedJob job) {
-        String data = job.getVariable("__customMetricsData").toString();
+        String data = job.getVariable(METRIC_DATA_VAR_NAME).toString();
         try {
             RandomEndpointDataObject dataObject = MAPPER.readValue(data, RandomEndpoint.RandomEndpointDataObject.class);
             Double value = Math.round(RANDOM.nextDouble() * dataObject.max) + dataObject.offset;
@@ -25,7 +27,7 @@ public class RandomEndpoint implements CustomMetricsEndpointInterface {
             return value;
         } catch (JsonProcessingException e) {
             LOG.error("JSON formatting error, Could not construct variables");
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
