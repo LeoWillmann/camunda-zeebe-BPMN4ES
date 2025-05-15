@@ -22,17 +22,20 @@ public class RandomEndpoint implements CustomMetricsEndpointInterface {
 
     @Override
     public Double queryMetric(final ActivatedJob job) {
-        String data = job.getVariable(METRIC_DATA_VAR_NAME).toString();
+        String data = null;
         try {
+            data = job.getVariable(METRIC_DATA_VAR_NAME).toString();
             RandomEndpointDataObject dataObject = MAPPER.readValue(data, RandomEndpoint.RandomEndpointDataObject.class);
             Double value = Math.round(RANDOM.nextDouble() * dataObject.max) + dataObject.offset;
             LOG.info("Construct random value with max: {} and offset: {}, Value: {}",
                     dataObject.max, dataObject.offset, value);
             return value;
         } catch (JsonProcessingException e) {
-            LOG.error("JSON formatting error, Could not construct variables");
-            return null;
+            LOG.error("JSON formatting error, Could not construct variables {}", data);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
         }
+        return null;
     }
 
     // data object for json data object.

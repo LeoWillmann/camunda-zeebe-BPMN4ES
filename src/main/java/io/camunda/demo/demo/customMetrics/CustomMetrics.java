@@ -1,65 +1,101 @@
 package io.camunda.demo.demo.customMetrics;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.spring.client.annotation.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 
 // Relative imports
-import static io.camunda.demo.demo.customMetrics.CustomMetricsProcessConstants.METRIC_TYPE_VAR_NAME;
-import static io.camunda.demo.demo.customMetrics.CustomMetricsProcessConstants.PREFIX_NAME;
 
-import io.camunda.demo.demo.customMetricsImplementations.RandomEndpoint;
+import static io.camunda.demo.demo.customMetrics.CustomMetricsProcessConstants.*;
 
 @Component
 public class CustomMetrics {
     private final static Logger LOG = LoggerFactory.getLogger(CustomMetrics.class);
 
     /*
-    Mapping of a metric type (String) to retrieval endpoint implementation of the CustomMetricsEndpointInterface type.
+    Filters a map by Key value with a predicate.
      */
-    private final static Map<String, CustomMetricsEndpointInterface> endpointMap = Map.of(
-            "energy", new RandomEndpoint(),
-            "water", new RandomEndpoint()
-    );
+    private static <K, V> Map<K, V> filterByKey(Map<K, V> map, Predicate<K> predicate) {
+        return map.entrySet()
+                .stream()
+                .filter(entry -> predicate.test(entry.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
 
     /*
     Job worker delegates the query for metric data to CustomMetricsEndpoint implementations.
     If a variable of the same name already exists (i.e., in case of a looping model), we add to the value.
      */
-    @JobWorker(type = PREFIX_NAME + "query")
-    public Map<String, Object> queryMetricData(
-            final ActivatedJob job,
-            @Variable(name = METRIC_TYPE_VAR_NAME) String metricType) {
-
-        // Name where we store our metric value.
-        String varName = PREFIX_NAME + metricType + "_" + job.getElementId();
-        Double result;
+    @JobWorker(type = METRIC_PREFIX_NAME + "query")
+    public Map<String, Object> queryMetricData(final ActivatedJob job) {
         try {
-            result = Double.valueOf(job.getVariable(varName).toString());
+            String metricType = job.getVariable(METRIC_TYPE_VAR_NAME).toString();
+            LOG.info("Query metric type: {}", metricType);
+
+            // Name where we store our metric value.
+            String varName = METRIC_PREFIX_NAME + metricType + METRIC_SEPARATOR + job.getElementId();
+
+            // Query endpoint and retrieve metric data.
+            CustomMetricsEndpointInterface endpoint = METRIC_ENDPOINT_MAP.get(metricType);
+            double result = 0.0d;
+            if (endpoint != null) {
+                Double query = endpoint.queryMetric(job);
+                result = query != null ? query : 0.0d; // null safe addition
+                LOG.info("Logging queried metric of value: {}", query);
+            } else {
+                LOG.error("No endpoint found for metric type: {}", metricType);
+            }
+
+            return Map.of(varName, getPreviousMetricValue(job, varName) + result);
         } catch (Exception e) {
-            // variable of varName is not present.
-            result = 0.0;
+            LOG.error("Could not query metrics: {}", e.getMessage());
+            return null;
         }
-
-        // Query endpoint and retrieve metric data.
-        CustomMetricsEndpointInterface endpoint = endpointMap.get(metricType);
-        if (endpoint != null) {
-            Double query = endpoint.queryMetric(job);
-            result += query != null ? query : 0.0;  // null safe addition
-            LOG.info("Logging queried metric of value: {}", query);
-        }
-
-        return Map.of(varName, result);
     }
 
-    @JobWorker(type = PREFIX_NAME + "compile")
-    public Map<String, Object> compileMetrics(final ActivatedJob job) {
-        LOG.info("{}", job.getVariablesAsMap());
-        return Map.of();
+    private double getPreviousMetricValue(final ActivatedJob job, String varName) {
+        try {
+            return Double.parseDouble(job.getVariable(varName).toString());
+        } catch (Exception e) {
+            // variable of varName is not present.
+            return 0.0d;
+        }
+    }
+
+    /*
+    Compiles the metric values of the present metric types into one value.
+     */
+    @JobWorker(type = METRIC_PREFIX_NAME + "compile")
+    public Map<String, Double> compileMetrics(final ActivatedJob job) {
+        // filter map by metric prefix name
+        Map<String, Object> filteredMap = filterByKey(job.getVariablesAsMap(), string -> string.startsWith(METRIC_PREFIX_NAME));
+
+        // initialize metric map
+        Map<String, Double> resultMap = new HashMap<>();
+
+        // for entry in our filtered map
+        for (var entry : filteredMap.entrySet()) {
+            // get the start and end index of our metric type
+            int startIndex = METRIC_PREFIX_NAME.length();
+            int endIndex = entry.getKey().indexOf(METRIC_SEPARATOR);
+            String metricType = entry.getKey().substring(startIndex, endIndex);    // get substring
+
+            Double currentValue = resultMap.getOrDefault(METRIC_PREFIX_NAME + metricType, 0.0d);
+            try {
+                Double mapValue = Double.parseDouble(entry.getValue().toString());
+                resultMap.put(METRIC_PREFIX_NAME + metricType, currentValue + mapValue);
+            } catch (NumberFormatException e) {
+                LOG.error("Could not compile Double metric for value: '{}' in {}", entry.getValue(), entry.getKey());
+            }
+        }
+        LOG.info("Compiled metrics: {}", resultMap);
+        return resultMap;
     }
 }
