@@ -2,7 +2,7 @@ package io.camunda.demo.demo;
 
 import java.util.Map;
 
-import io.camunda.demo.demo.customMetrics.CustomMetricsThread;
+import io.camunda.demo.demo.customMetrics.CustomMetricsThreadPoller;
 import io.camunda.demo.demo.customMetricsImplementations.RandomThreadedEndpoint;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ public class ChargeCreditCardWorker {
 
     @JobWorker(type = "charge-credit-card")
     public Map<String, Double> chargeCreditCard(@Variable(name = "totalWithTax") Double totalWithTax, final ActivatedJob job) {
-        CustomMetricsThread thread = new CustomMetricsThread(job, 100, new RandomThreadedEndpoint());
+        CustomMetricsThreadPoller thread = new CustomMetricsThreadPoller(job, 100, new RandomThreadedEndpoint());
         thread.start();
         LOG.info("charging credit card: {}", totalWithTax);
         for (int i = 0; i < 3; i++) {

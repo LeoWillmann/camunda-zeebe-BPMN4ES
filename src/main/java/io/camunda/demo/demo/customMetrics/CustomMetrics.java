@@ -20,7 +20,7 @@ public class CustomMetrics {
     private final static Logger LOG = LoggerFactory.getLogger(CustomMetrics.class);
 
     /*
-    Mapping of a metric type (String) to retrieval endpoint implementation.
+    Mapping of a metric type (String) to retrieval endpoint implementation of the CustomMetricsEndpointInterface type.
      */
     private final static Map<String, CustomMetricsEndpointInterface> endpointMap = Map.of(
             "energy", new RandomEndpoint(),
@@ -46,12 +46,14 @@ public class CustomMetrics {
             result = 0.0;
         }
 
+        // Query endpoint and retrieve metric data.
         CustomMetricsEndpointInterface endpoint = endpointMap.get(metricType);
         if (endpoint != null) {
             Double query = endpoint.queryMetric(job);
-            result += query;
+            result += query != null ? query : 0.0;  // null safe addition
             LOG.info("Logging queried metric of value: {}", query);
         }
+
         return Map.of(varName, result);
     }
 

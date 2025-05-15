@@ -11,6 +11,10 @@ import java.util.Random;
 
 import static io.camunda.demo.demo.customMetrics.CustomMetricsProcessConstants.METRIC_DATA_VAR_NAME;
 
+/*
+Implements the CustomMetricsEndpointInterface and returns a random generated value.
+This requires the METRIC_DATA_VAR_NAME to contain a JSON object of RandomEndpointDataObject type.
+ */
 public class RandomEndpoint implements CustomMetricsEndpointInterface {
     private final static Logger LOG = LoggerFactory.getLogger(RandomEndpoint.class);
     private final static Random RANDOM = new Random();

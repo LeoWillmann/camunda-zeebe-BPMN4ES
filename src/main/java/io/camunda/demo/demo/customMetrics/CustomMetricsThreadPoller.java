@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /*
-This is for continuous measuring of a metric value.
+This is for continuous polling of a metric value.
 The thread starts a loop which is only stopped by the stopRunning() method.
  */
-public class CustomMetricsThread extends Thread {
-    private final static Logger LOG = LoggerFactory.getLogger(CustomMetricsThread.class);
+public class CustomMetricsThreadPoller extends Thread {
+    private final static Logger LOG = LoggerFactory.getLogger(CustomMetricsThreadPoller.class);
 
     private final ActivatedJob job;
     private final AtomicDouble atomicMetricValue = new AtomicDouble();
@@ -20,8 +20,8 @@ public class CustomMetricsThread extends Thread {
     private final AtomicBoolean isRunning = new AtomicBoolean(true);
     private final CustomMetricsThreadedInterface threadedQueryInterface;
 
-    public CustomMetricsThread(ActivatedJob job, long timeoutMillis,
-                               CustomMetricsThreadedInterface threadedQueryInterface) {
+    public CustomMetricsThreadPoller(ActivatedJob job, long timeoutMillis,
+                                     CustomMetricsThreadedInterface threadedQueryInterface) {
         this.job = job;
         this.timeoutMillis = timeoutMillis;
         this.threadedQueryInterface = threadedQueryInterface;
@@ -67,7 +67,7 @@ public class CustomMetricsThread extends Thread {
     }
 
     /*
-    Queries a metric value from the set query implementation
+    Queries a metric value from the given query implementation
     and sets the Atomic boolean if the returned value is not null.
      */
     private void queryAndSetMetricValue() {
