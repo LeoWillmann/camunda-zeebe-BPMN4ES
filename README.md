@@ -14,13 +14,9 @@ additional job workers to monitor custom metrics.
 - [Camunda 8 Desktop Modeler](https://docs.camunda.io/docs/components/modeler/desktop-modeler/)
 - [Camunda 8 Desktop Modeler BPMN4ES plugin](https://github.com/rug-student/camunda-modeler-BPMN4ES)
 
-## Install dependencies
-
-```
-mvn install
-```
-
 ## Launch application
+
+- Camunda 8 Run needs to be running to launch the application.
 
 Run the main function in [DemoApplication.java](src/main/java/io/camunda/demo/demo/DemoApplication.java)
 or execute from the terminal:
