@@ -8,7 +8,7 @@ additional job workers to monitor custom metrics.
 
 ## Prerequisites
 
-- [OpenJDK 21+](https://docs.camunda.io/docs/guides/getting-started-java-spring/)
+- [OpenJDK 21+](https://openjdk.org/install/)
 - [Maven 3](https://maven.apache.org/index.html)
 - [Camunda 8 Run](https://docs.camunda.io/docs/self-managed/setup/deploy/local/c8run/)
 - [Camunda 8 Desktop Modeler](https://docs.camunda.io/docs/components/modeler/desktop-modeler/)
