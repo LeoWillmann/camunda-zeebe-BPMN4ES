@@ -12,7 +12,7 @@ additional job workers to monitor custom metrics.
 - [Maven 3](https://maven.apache.org/index.html)
 - [Camunda 8 Run](https://docs.camunda.io/docs/self-managed/setup/deploy/local/c8run/)
 - [Camunda 8 Desktop Modeler](https://docs.camunda.io/docs/components/modeler/desktop-modeler/)
-- [Camunda 8 Desktop Modeler BPMN4ES plugin](https://github.com/rug-student/camunda-modeler-BPMN4ES)
+- [Camunda 8 Desktop Modeler BPMN4ES plugin](https://github.com/LeoWillmann/camunda-modeler-BPMN4ES)
 
 ## Launch application
 
