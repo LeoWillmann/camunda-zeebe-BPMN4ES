@@ -84,7 +84,7 @@ public class CustomMetrics {
         for (var entry : filteredMap.entrySet()) {
             // get the start and end index of our metric type
             int startIndex = METRIC_PREFIX_NAME.length();
-            int endIndex = entry.getKey().indexOf(METRIC_SEPARATOR);
+            int endIndex = entry.getKey().indexOf(METRIC_SEPARATOR, startIndex);
             String metricType = entry.getKey().substring(startIndex, endIndex);    // get substring
 
             Double currentValue = resultMap.getOrDefault(METRIC_PREFIX_NAME + metricType, 0.0d);

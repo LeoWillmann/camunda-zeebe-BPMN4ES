@@ -71,9 +71,12 @@ public class CustomMetricsThreadPoller extends Thread {
     and sets the Atomic boolean if the returned value is not null.
      */
     private void queryAndSetMetricValue() {
-        Double value = threadedQueryInterface.queryMetric(job, atomicMetricValue);
-        if (value != null) {    // check for null condition
-            atomicMetricValue.set(value);
+        try {
+            Double value = threadedQueryInterface.queryMetric(job, atomicMetricValue);
+            if (value != null) {    // check for null condition
+                atomicMetricValue.set(value);
+            }
+        } catch (Exception e) {
         }
     }
 }

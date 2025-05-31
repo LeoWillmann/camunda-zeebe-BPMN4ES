@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmn4es="https://github.com/michel-medema/BPMN4ES" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0fjaxqv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0fjaxqv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
   <bpmn:process id="Process-payments" name="Process payments" isExecutable="true">
     <bpmn:extensionElements />
     <bpmn:serviceTask id="Activity_0r18lc7" name="charge credit card">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="charge-credit-card" />
         <zeebe:ioMapping>
-          <zeebe:input source="=&#34;energy-consumption&#34;" target="__customMetricsType" />
-          <zeebe:input source="=&#34;{\&#34;max\&#34;:100,\&#34;offset\&#34;:-20}&#34;" target="__customMetricsData" />
-          <zeebe:input source="=0" target="__customMetricsTarget" />
+          <zeebe:input source="=&#34;renewable-energy&#34;" target="__customMetricsType" />
+          <zeebe:input source="=&#34;{\&#34;max\&#34;:10}&#34;" target="__customMetricsData" />
+          <zeebe:input source="=777" target="__customMetricsTarget" />
+          <zeebe:output source="=__customMetricsTarget" target="TargetValue_Activity_0r18lc7" />
         </zeebe:ioMapping>
         <zeebe:executionListeners>
           <zeebe:executionListener eventType="end" type="custom-metrics_query" />
         </zeebe:executionListeners>
-        <bpmn4es:environmentalIndicators>
-          <bpmn4es:keyEnvironmentalIndicator id="energy-consumption" unit="kwh" targetValue="0" icon="bolt" />
-        </bpmn4es:environmentalIndicators>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1o5p0y2</bpmn:incoming>
       <bpmn:outgoing>Flow_13nvp74</bpmn:outgoing>
@@ -40,13 +38,10 @@
     <bpmn:scriptTask id="Activity_1dmai4s" name="prepare transaction">
       <bpmn:extensionElements>
         <zeebe:script expression="=total * 1.2" resultVariable="totalWithTax" />
-        <bpmn4es:environmentalIndicators>
-          <bpmn4es:keyEnvironmentalIndicator id="energy-consumption" unit="kwh" targetValue="0" icon="bolt" />
-        </bpmn4es:environmentalIndicators>
         <zeebe:ioMapping>
-          <zeebe:input source="=&#34;energy-consumption&#34;" target="__customMetricsType" />
-          <zeebe:input source="=&#34;{\&#34;max\&#34;:100,\&#34;offset\&#34;:-20}&#34;" target="__customMetricsData" />
-          <zeebe:input source="=0" target="__customMetricsTarget" />
+          <zeebe:input source="=&#34;carbon-emissions&#34;" target="__customMetricsType" />
+          <zeebe:input source="=&#34;{\&#34;max\&#34;:100}&#34;" target="__customMetricsData" />
+          <zeebe:input source="=777" target="__customMetricsTarget" />
         </zeebe:ioMapping>
         <zeebe:executionListeners>
           <zeebe:executionListener eventType="end" type="custom-metrics_query" />
@@ -59,34 +54,34 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process-payments">
       <bpmndi:BPMNShape id="Activity_0n03e7w_di" bpmnElement="Activity_0r18lc7">
-        <dc:Bounds x="440" y="160" width="100" height="80" />
+        <dc:Bounds x="440" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_18tvo9y_di" bpmnElement="Event_18tvo9y">
-        <dc:Bounds x="642" y="182" width="36" height="36" />
+        <dc:Bounds x="642" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="615" y="225" width="90" height="14" />
+          <dc:Bounds x="615" y="145" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="192" y="182" width="36" height="36" />
+        <dc:Bounds x="192" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="166" y="225" width="89" height="14" />
+          <dc:Bounds x="166" y="145" width="89" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1kp1qx5_di" bpmnElement="Activity_1dmai4s">
-        <dc:Bounds x="280" y="160" width="100" height="80" />
+        <dc:Bounds x="280" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_02gkejc_di" bpmnElement="Flow_02gkejc">
-        <di:waypoint x="228" y="200" />
-        <di:waypoint x="280" y="200" />
+        <di:waypoint x="228" y="120" />
+        <di:waypoint x="280" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_13nvp74_di" bpmnElement="Flow_13nvp74">
-        <di:waypoint x="540" y="200" />
-        <di:waypoint x="642" y="200" />
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="642" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1o5p0y2_di" bpmnElement="Flow_1o5p0y2">
-        <di:waypoint x="380" y="200" />
-        <di:waypoint x="440" y="200" />
+        <di:waypoint x="380" y="120" />
+        <di:waypoint x="440" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

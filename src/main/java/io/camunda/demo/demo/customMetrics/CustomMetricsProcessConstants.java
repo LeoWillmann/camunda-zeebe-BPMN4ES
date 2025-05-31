@@ -9,7 +9,7 @@ public interface CustomMetricsProcessConstants {
     String METRIC_TYPE_VAR_NAME = "__customMetricsType";
     String METRIC_DATA_VAR_NAME = "__customMetricsData";
     String METRIC_TARGET_VAR_NAME = "__customMetricsTarget";
-    String METRIC_SEPARATOR = "#";
+    String METRIC_SEPARATOR = "#"; // The separator should not appear in the metric endpoint map
 
     /*
     Static mapping of a metric type (String) to retrieval endpoint implementation of the CustomMetricsEndpointInterface type.
