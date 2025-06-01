@@ -49,11 +49,12 @@ public class CustomMetrics {
                 Double query = endpoint.queryMetric(job);
                 result = query != null ? query : 0.0d; // null safe addition
                 LOG.info("Logging queried metric of value: {}", query);
+                return Map.of(varName, getPreviousMetricValue(job, varName) + result);
             } else {
                 LOG.error("No endpoint found for metric type: {}", metricType);
+                return null;
             }
 
-            return Map.of(varName, getPreviousMetricValue(job, varName) + result);
         } catch (Exception e) {
             LOG.error("Could not query metrics: {}", e.getMessage());
             return null;

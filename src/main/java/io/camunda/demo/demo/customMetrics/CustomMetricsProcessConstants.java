@@ -1,6 +1,7 @@
 package io.camunda.demo.demo.customMetrics;
 
 import io.camunda.demo.demo.customMetricsImplementations.RandomEndpoint;
+import io.camunda.zeebe.client.api.response.ActivatedJob;
 
 import java.util.Map;
 
@@ -13,8 +14,14 @@ public interface CustomMetricsProcessConstants {
 
     /*
     Static mapping of a metric type (String) to retrieval endpoint implementation of the CustomMetricsEndpointInterface type.
+    The entries prefixed with "_test" are required for testing purposes.
      */
     Map<String, CustomMetricsEndpointInterface> METRIC_ENDPOINT_MAP = Map.of(
+            "_testNull", (ActivatedJob job) -> null,
+            "_testResult", (ActivatedJob job) -> 1d,
+            "_testThrow", (ActivatedJob job) -> {
+                throw new RuntimeException();
+            },
             "water", new RandomEndpoint(),
             "renewable-energy", new RandomEndpoint(),
             "energy-consumption", new RandomEndpoint()
