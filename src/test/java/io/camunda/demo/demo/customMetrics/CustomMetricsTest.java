@@ -94,6 +94,39 @@ public class CustomMetricsTest {
     }
 
     @Test
+    void testCompileMetricDataMapMultipleTimes() {
+        Map<String, Object> varMap = new HashMap<>(Map.of(
+                generateVarName(TEST_RESULT), 1d
+        ));
+        Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
+
+        // Compile first time
+        Map<String, Object> resultMap = expectedCompileResult(TEST_RESULT, 1d);
+        assertEquals(customMetrics.compileMetrics(job), resultMap);
+
+        // Compile second time
+        varMap.putAll(resultMap);
+        assertEquals(customMetrics.compileMetrics(job), resultMap);
+    }
+
+    @Test
+    void testCompileMetricDataMapMultipleTimesWithVariableChanges() {
+        Map<String, Object> varMap = new HashMap<>(Map.of(
+                generateVarName(TEST_RESULT) + "1", 1d
+        ));
+        Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
+
+        // Compile first time
+        Map<String, Object> resultMap = expectedCompileResult(TEST_RESULT, 1d);
+        assertEquals(customMetrics.compileMetrics(job), resultMap);
+
+        // Compile second time
+        varMap.putAll(resultMap);
+        varMap.put(generateVarName(TEST_RESULT) + "2", 20d);
+        assertEquals(customMetrics.compileMetrics(job), expectedCompileResult(TEST_RESULT, 21d));
+    }
+
+    @Test
     void testCompileMetricDataMapWithInvalidValueTypes() {
         Map<String, Object> varMap = Map.of(
                 generateVarName(TEST_RESULT), "This is not a number"

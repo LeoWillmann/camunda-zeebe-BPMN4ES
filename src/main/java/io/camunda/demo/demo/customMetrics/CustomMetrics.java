@@ -44,11 +44,11 @@ public class CustomMetrics {
 
             // Query endpoint and retrieve metric data.
             CustomMetricsEndpointInterface endpoint = METRIC_ENDPOINT_MAP.get(metricType);
-            double result = 0.0d;
             if (endpoint != null) {
-                Double query = endpoint.queryMetric(job);
-                result = query != null ? query : 0.0d; // null safe addition
-                LOG.info("Logging queried metric of value: {}", query);
+                Double result = endpoint.queryMetric(job);
+                if (result == null)
+                    result = 0d;
+                LOG.info("Logging queried metric of value: {}", result);
                 return Map.of(varName, getPreviousMetricValue(job, varName) + result);
             } else {
                 LOG.error("No endpoint found for metric type: {}", metricType);
@@ -86,6 +86,9 @@ public class CustomMetrics {
             // get the start and end index of our metric type
             int startIndex = METRIC_PREFIX_NAME.length();
             int endIndex = entry.getKey().indexOf(METRIC_SEPARATOR, startIndex);
+            if (endIndex == -1)
+                continue; // if the metric separator is not found, skip
+
             String metricType = entry.getKey().substring(startIndex, endIndex);    // get substring
 
             Double currentValue = resultMap.getOrDefault(METRIC_PREFIX_NAME + metricType, 0.0d);

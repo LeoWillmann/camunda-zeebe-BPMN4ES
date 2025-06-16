@@ -2,6 +2,7 @@ package io.camunda.demo.demo.customMetrics;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,11 @@ public class CustomMetricsThreadPoller extends Thread {
     private final AtomicBoolean isRunning = new AtomicBoolean(true);
     private final CustomMetricsThreadedInterface threadedQueryInterface;
 
-    public CustomMetricsThreadPoller(ActivatedJob job, long timeoutMillis,
-                                     CustomMetricsThreadedInterface threadedQueryInterface) {
+    public CustomMetricsThreadPoller(@NotNull ActivatedJob job, long timeoutMillis,
+                                     @NotNull CustomMetricsThreadedInterface threadedQueryInterface) {
+        if (timeoutMillis < 0) {
+            throw new RuntimeException();
+        }
         this.job = job;
         this.timeoutMillis = timeoutMillis;
         this.threadedQueryInterface = threadedQueryInterface;
@@ -77,6 +81,7 @@ public class CustomMetricsThreadPoller extends Thread {
                 atomicMetricValue.set(value);
             }
         } catch (Exception e) {
+            // do nothing
         }
     }
 }
