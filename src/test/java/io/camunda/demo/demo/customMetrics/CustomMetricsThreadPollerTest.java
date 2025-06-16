@@ -77,7 +77,7 @@ public class CustomMetricsThreadPollerTest {
     @Test
     void testThreadRunResultInterface() {
         CustomMetricsThreadPoller poller = new CustomMetricsThreadPoller(job, 10, interfaceResult);
-        assertEquals(1d, poller.getAtomicMetricValue().get());
+        assertEquals(0d, poller.getAtomicMetricValue().get());
         poller.start();
         try {
             poller.stopRunning();
@@ -100,5 +100,20 @@ public class CustomMetricsThreadPollerTest {
             throw new RuntimeException(e);
         }
         assertEquals(0d, poller.getAtomicMetricValue().get());
+    }
+
+    @Test
+    void testThreadRunWaitForTimeout() {
+        CustomMetricsThreadPoller poller = new CustomMetricsThreadPoller(job, 10, interfaceResult);
+        assertEquals(0d, poller.getAtomicMetricValue().get());
+        poller.start();
+        try {
+            Thread.sleep(5);
+            poller.stopRunning();
+            poller.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals(1d, poller.getAtomicMetricValue().get());
     }
 }
