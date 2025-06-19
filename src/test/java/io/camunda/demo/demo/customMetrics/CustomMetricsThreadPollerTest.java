@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CustomMetricsThreadPollerTest {
 
     final CustomMetricsThreadedInterface interfaceNull = (ActivatedJob job, AtomicDouble metric) -> null;
-    final CustomMetricsThreadedInterface interfaceResult = (ActivatedJob job, AtomicDouble metric) -> 1d;
+    final CustomMetricsThreadedInterface interfaceResult = (ActivatedJob job, AtomicDouble metric) -> metric.get() + 1d;
     final CustomMetricsThreadedInterface interfaceThrow = (ActivatedJob job, AtomicDouble metric) -> {
         throw new RuntimeException();
     };
@@ -114,6 +114,7 @@ public class CustomMetricsThreadPollerTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        assertEquals(1d, poller.getAtomicMetricValue().get());
+        // expects two queries
+        assertEquals(2d, poller.getAtomicMetricValue().get());
     }
 }

@@ -62,7 +62,7 @@ public class CustomMetricsThreadPoller extends Thread {
                     this.wait(timeoutMillis);
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                LOG.warn("Thread timeout exception for timeout time {}", timeoutMillis);
             }
             queryAndSetMetricValue();
         }

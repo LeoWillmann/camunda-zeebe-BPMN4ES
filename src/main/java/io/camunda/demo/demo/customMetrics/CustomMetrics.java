@@ -46,9 +46,10 @@ public class CustomMetrics {
             CustomMetricsEndpointInterface endpoint = METRIC_ENDPOINT_MAP.get(metricType);
             if (endpoint != null) {
                 Double result = endpoint.queryMetric(job);
-                if (result == null)
-                    result = 0d;
                 LOG.info("Logging queried metric of value: {}", result);
+                if (result == null) {
+                    return null;
+                }
                 return Map.of(varName, getPreviousMetricValue(job, varName) + result);
             } else {
                 LOG.error("No endpoint found for metric type: {}", metricType);

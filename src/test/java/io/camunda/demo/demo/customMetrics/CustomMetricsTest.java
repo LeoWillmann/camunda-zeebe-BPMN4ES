@@ -40,7 +40,7 @@ public class CustomMetricsTest {
         Map<String, Object> varMap = Map.of();
         Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
 
-        assertEquals(customMetrics.compileMetrics(job), Map.of());
+        assertEquals(Map.of(), customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class CustomMetricsTest {
         );
         Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
 
-        assertEquals(customMetrics.compileMetrics(job), Map.of());
+        assertEquals(Map.of(), customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class CustomMetricsTest {
         );
         Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
 
-        assertEquals(customMetrics.compileMetrics(job), expectedCompileResult(TEST_RESULT, 1d));
+        assertEquals(expectedCompileResult(TEST_RESULT, 1d), customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class CustomMetricsTest {
         );
         Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
 
-        assertEquals(customMetrics.compileMetrics(job), expectedCompileResult(TEST_RESULT, 21d));
+        assertEquals(expectedCompileResult(TEST_RESULT, 21d), customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class CustomMetricsTest {
         map.putAll(expectedCompileResult(TEST_RESULT + "1", 1d));
         map.putAll(expectedCompileResult(TEST_RESULT + "2", 20d));
 
-        assertEquals(customMetrics.compileMetrics(job), map);
+        assertEquals(map, customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -102,11 +102,11 @@ public class CustomMetricsTest {
 
         // Compile first time
         Map<String, Object> resultMap = expectedCompileResult(TEST_RESULT, 1d);
-        assertEquals(customMetrics.compileMetrics(job), resultMap);
+        assertEquals(resultMap, customMetrics.compileMetrics(job));
 
         // Compile second time
         varMap.putAll(resultMap);
-        assertEquals(customMetrics.compileMetrics(job), resultMap);
+        assertEquals(resultMap, customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -118,12 +118,12 @@ public class CustomMetricsTest {
 
         // Compile first time
         Map<String, Object> resultMap = expectedCompileResult(TEST_RESULT, 1d);
-        assertEquals(customMetrics.compileMetrics(job), resultMap);
+        assertEquals(resultMap, customMetrics.compileMetrics(job));
 
         // Compile second time
         varMap.putAll(resultMap);
         varMap.put(generateVarName(TEST_RESULT) + "2", 20d);
-        assertEquals(customMetrics.compileMetrics(job), expectedCompileResult(TEST_RESULT, 21d));
+        assertEquals(expectedCompileResult(TEST_RESULT, 21d), customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CustomMetricsTest {
         );
         Mockito.when(job.getVariablesAsMap()).thenReturn(varMap);
 
-        assertEquals(customMetrics.compileMetrics(job), Map.of());
+        assertEquals(Map.of(), customMetrics.compileMetrics(job));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class CustomMetricsTest {
         Mockito.when(job.getElementId()).thenReturn(ELEMENT_ID);
         setJobMetricTypeVariable(TEST_RESULT);
 
-        assertEquals(customMetrics.queryMetricData(job), expectedQueryResult(1d));
+        assertEquals(expectedQueryResult(1d), customMetrics.queryMetricData(job));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class CustomMetricsTest {
         setJobMetricTypeVariable(TEST_RESULT);
         Mockito.when(job.getVariable(varName)).thenReturn(20d);
 
-        assertEquals(customMetrics.queryMetricData(job), expectedQueryResult(21d));
+        assertEquals(expectedQueryResult(21d), customMetrics.queryMetricData(job));
     }
 
     @Test
@@ -161,17 +161,7 @@ public class CustomMetricsTest {
         Mockito.when(job.getElementId()).thenReturn(ELEMENT_ID);
         setJobMetricTypeVariable(TEST_NULL);
 
-        assertEquals(customMetrics.queryMetricData(job), expectedQueryResult(0d));
-    }
-
-    @Test
-    void testQueryMetricDataNullEndpointResultWithPreviousValue() {
-        // mock element and metric types
-        Mockito.when(job.getElementId()).thenReturn(ELEMENT_ID);
-        setJobMetricTypeVariable(TEST_NULL);
-        Mockito.when(job.getVariable(varName)).thenReturn(20d);
-
-        assertEquals(customMetrics.queryMetricData(job), expectedQueryResult(20d));
+        assertNull(customMetrics.queryMetricData(job));
     }
 
     @Test
